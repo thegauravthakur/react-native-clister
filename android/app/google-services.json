@@ -1,0 +1,69 @@
+{
+  "project_info": {
+    "project_number": "662818236606",
+    "firebase_url": "https://clister-react.firebaseio.com",
+    "project_id": "clister-react",
+    "storage_bucket": "clister-react.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:662818236606:android:6bda28b3628599ab3a16ef",
+        "android_client_info": {
+          "package_name": "com.clister"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "662818236606-m1i1ebgubb6a5gi0jetef001umf4q6cs.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA49ozgOilNzmnvgoJqntq2-syaPceSqXg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "662818236606-ivi7563krtoprghbctde5kk5u1l616fb.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:662818236606:android:d8929ada1a30e5c53a16ef",
+        "android_client_info": {
+          "package_name": "tech.clister"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "662818236606-m1i1ebgubb6a5gi0jetef001umf4q6cs.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA49ozgOilNzmnvgoJqntq2-syaPceSqXg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "662818236606-ivi7563krtoprghbctde5kk5u1l616fb.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
