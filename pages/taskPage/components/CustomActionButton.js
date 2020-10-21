@@ -7,7 +7,7 @@ const CustomActionButton = ({ refRBSheet }) => {
       active={true}
       direction="up"
       containerStyle={{}}
-      style={{ backgroundColor: "#3F51B5", marginBottom: 56 }}
+      style={{ backgroundColor: "#3F51B5" }}
       position="bottomRight"
       onPress={() => refRBSheet.current.open()}
     >

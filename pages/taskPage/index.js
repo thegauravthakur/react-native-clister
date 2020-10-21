@@ -1,5 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
-import { View, StyleSheet, Dimensions } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Dimensions,
+  ScrollView,
+  FlatList,
+} from "react-native";
 import { Redirect } from "react-router-native";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { currentListState, userState } from "../../recoil/atoms";
@@ -186,9 +192,14 @@ const TaskPage = ({ navigation }) => {
     return <Redirect to={"/"} />;
   }
 
-  return (
-    <View style={styles.root}>
-      <CustomHeader navigation={navigation} />
+  const renderItem = ({ item, index }) => {
+    return (
+      <CustomCard tasks={tasks} setTasks={setTasks} task={item} index={index} />
+    );
+  };
+
+  const listHeaderComponent = () => {
+    return (
       <View>
         <Text
           style={{
@@ -202,17 +213,20 @@ const TaskPage = ({ navigation }) => {
           {listName}
         </Text>
       </View>
+    );
+  };
+
+  return (
+    <View style={styles.root}>
+      <CustomHeader refRBSheet={refRBSheet} navigation={navigation} />
+
       {tasks.length > 0 ? (
-        tasks.map((task, index) => (
-          <View key={index}>
-            <CustomCard
-              tasks={tasks}
-              setTasks={setTasks}
-              task={task}
-              index={index}
-            />
-          </View>
-        ))
+        <FlatList
+          ListHeaderComponent={listHeaderComponent}
+          data={tasks}
+          renderItem={renderItem}
+          keyExtractor={(item, index) => index.toString()}
+        />
       ) : (
         <Card>
           <Text style={{ textAlign: "center", padding: 20 }}>
@@ -220,6 +234,7 @@ const TaskPage = ({ navigation }) => {
           </Text>
         </Card>
       )}
+
       <CustomRbSheet
         refRBSheet={refRBSheet}
         task={task}
@@ -229,7 +244,7 @@ const TaskPage = ({ navigation }) => {
         tasks={tasks}
         setTask={setTask}
       />
-      <CustomActionButton refRBSheet={refRBSheet} />
+      {/*<CustomActionButton refRBSheet={refRBSheet} />*/}
     </View>
   );
 };

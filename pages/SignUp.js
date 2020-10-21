@@ -3,6 +3,7 @@ import { Text, View, StyleSheet, ActivityIndicator } from "react-native";
 import { useRecoilState } from "recoil";
 import { userState } from "../recoil/atoms";
 import { Redirect } from "react-router-native";
+import Config from "react-native-config";
 import {
   Body,
   Button,
@@ -81,12 +82,11 @@ const SignUp = ({ history }) => {
               let otp = randomFixedInteger(6);
               let options = {
                 method: "POST",
-                url: "https://rapidapi.p.rapidapi.com/mail/send",
+                url: Config.API_URL,
                 headers: {
-                  "content-type": "application/json",
-                  "x-rapidapi-host": "rapidprod-sendgrid-v1.p.rapidapi.com",
-                  "x-rapidapi-key":
-                    "5b2c629feemsh19321dfe48d26c8p157e05jsne14663bbb608",
+                  "content-type": Config.CONTENT_TYPE,
+                  "x-rapidapi-host": Config.X_RAPIDAPI_HOST,
+                  "x-rapidapi-key": Config.X_RAPIDAPI_KEY,
                 },
                 data: {
                   personalizations: [
@@ -108,6 +108,7 @@ const SignUp = ({ history }) => {
                 })
                 .catch(function (error) {
                   setLoading(false);
+                  console.log(Config.API_URL);
                   console.error(error);
                 });
             }}

@@ -2,11 +2,12 @@ import React from "react";
 import { Body, Card, CardItem, Icon } from "native-base";
 import { Text, View } from "react-native";
 import firestore from "@react-native-firebase/firestore";
-import { useRecoilValue } from "recoil";
-import { userState } from "../../../recoil/atoms";
+import { useRecoilValue, useSetRecoilState } from "recoil";
+import { currentListState, userState } from "../../../recoil/atoms";
 import Ripple from "react-native-material-ripple";
 
 const CustomCard = ({ task, index, tasks, setTasks }) => {
+  const currentSection = useRecoilValue(currentListState);
   const currentUser = useRecoilValue(userState);
   return (
     <Card>
@@ -45,7 +46,7 @@ const CustomCard = ({ task, index, tasks, setTasks }) => {
                 setTasks(temp);
                 await firestore()
                   .collection(currentUser)
-                  .doc("default")
+                  .doc(currentSection)
                   .set({ task: temp });
               }}
             >

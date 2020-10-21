@@ -5,8 +5,7 @@ import { useSetRecoilState } from "recoil";
 import { userState } from "../../../recoil/atoms";
 import Ripple from "react-native-material-ripple";
 
-const CustomHeader = ({ navigation }) => {
-  const setCurrentUser = useSetRecoilState(userState);
+const CustomHeader = ({ navigation, refRBSheet }) => {
   return (
     <Header>
       <Left>
@@ -25,15 +24,12 @@ const CustomHeader = ({ navigation }) => {
       </Body>
       <Right>
         <Ripple
-          onPress={async () => {
-            await auth().signOut();
-            setCurrentUser(null);
-          }}
+          onPress={() => refRBSheet.current.open()}
           rippleContainerBorderRadius={100}
           rippleSize={100}
         >
           <Button transparent>
-            <Icon type="FontAwesome" name="sign-out" />
+            <Icon type="FontAwesome" name="plus" />
           </Button>
         </Ripple>
       </Right>
