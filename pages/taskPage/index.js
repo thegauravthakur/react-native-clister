@@ -82,81 +82,89 @@ const CustomDrawer = ({ navigation }) => {
           }}
         />
       </Dialog.Container>
-      <List>
-        <ListItem
-          icon
-          button
-          onPress={() => {
-            setDialog(true);
-          }}
-        >
-          <Icon
-            style={{ color: "#3F51B5" }}
-            type={"FontAwesome"}
-            name={"plus"}
-          />
-        </ListItem>
-        <ListItem
-          selected={"default" === currentList}
-          button
-          onPress={() => {
-            setCurrentList("default");
-            navigation.closeDrawer();
-          }}
-        >
-          <Text>{"default"}</Text>
-        </ListItem>
-        {documents.map((document, index) => {
-          return document === "default" ? null : (
+      <View style={{ justifyContent: "flex-end" }}>
+        <View style={{}}>
+          <List>
             <ListItem
-              key={index}
-              selected={document === currentList}
+              icon
               button
               onPress={() => {
-                setCurrentList(document);
+                setDialog(true);
+              }}
+            >
+              <Icon
+                style={{ color: "#3F51B5" }}
+                type={"FontAwesome"}
+                name={"plus"}
+              />
+            </ListItem>
+            <ListItem
+              selected={"default" === currentList}
+              button
+              onPress={() => {
+                setCurrentList("default");
                 navigation.closeDrawer();
               }}
             >
-              <Left>
-                <Text
-                  style={{
-                    fontWeight: document === currentList ? "bold" : "normal",
+              <Text>{"default"}</Text>
+            </ListItem>
+            {documents.map((document, index) => {
+              return document === "default" ? null : (
+                <ListItem
+                  key={index}
+                  selected={document === currentList}
+                  button
+                  onPress={() => {
+                    setCurrentList(document);
+                    navigation.closeDrawer();
                   }}
                 >
-                  {document}
-                </Text>
-              </Left>
-              <Right>
-                <Icon
-                  onPress={async () => {
-                    try {
-                      let temp = [...documents];
-                      temp.splice(index, 1);
-                      setCurrentList("default");
-                      setDocuments(temp);
-                      await firestore()
-                        .collection(currentUser)
-                        .doc(document)
-                        .delete();
-                      const value = await AsyncStorage.getItem("@list");
-                      if (value !== null) {
-                        if (value === document) {
-                          await AsyncStorage.setItem("@list", "default");
+                  <Left>
+                    <Text
+                      style={{
+                        fontWeight:
+                          document === currentList ? "bold" : "normal",
+                      }}
+                    >
+                      {document}
+                    </Text>
+                  </Left>
+                  <Right>
+                    <Icon
+                      onPress={async () => {
+                        try {
+                          let temp = [...documents];
+                          temp.splice(index, 1);
+                          setCurrentList("default");
+                          setDocuments(temp);
+                          await firestore()
+                            .collection(currentUser)
+                            .doc(document)
+                            .delete();
+                          const value = await AsyncStorage.getItem("@list");
+                          if (value !== null) {
+                            if (value === document) {
+                              await AsyncStorage.setItem("@list", "default");
+                            }
+                          }
+                        } catch (e) {
+                          // error reading value
                         }
-                      }
-                    } catch (e) {
-                      // error reading value
-                    }
-                  }}
-                  style={{ fontSize: 22, color: "#3F51B5" }}
-                  type="MaterialIcons"
-                  name="delete"
-                />
-              </Right>
-            </ListItem>
-          );
-        })}
-      </List>
+                      }}
+                      style={{ fontSize: 22, color: "#3F51B5" }}
+                      type="MaterialIcons"
+                      name="delete"
+                    />
+                  </Right>
+                </ListItem>
+              );
+            })}
+          </List>
+        </View>
+        <View>
+          <Text>hello</Text>
+        </View>
+      </View>
     </View>
   );
 };
