@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Text, View } from "react-native";
+import { Dimensions, ProgressBarAndroid, View } from "react-native";
 import auth from "@react-native-firebase/auth";
 import { useSetRecoilState } from "recoil";
 import { currentListState, userState } from "../recoil/atoms";
@@ -30,7 +30,21 @@ const Startup = ({ children }) => {
     fetchUser().then();
   }, []);
   if (loading) {
-    return <Text>loading</Text>;
+    return (
+      <View
+        style={{
+          minHeight: Dimensions.get("window").height,
+          backgroundColor: "black",
+        }}
+      >
+        {loading ? (
+          <ProgressBarAndroid
+            styleAttr="Horizontal"
+            style={{ marginVertical: -7 }}
+          />
+        ) : null}
+      </View>
+    );
   }
   return <View>{children}</View>;
 };

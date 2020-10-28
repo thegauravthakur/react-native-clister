@@ -135,8 +135,8 @@ android {
         applicationId "com.clister"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 2
-        versionName "2"
+        versionCode 5
+        versionName "5"
         multiDexEnabled true
     }
      signingConfigs {
@@ -225,4 +225,5 @@ task copyDownloadableDepsToLibs(type: Copy) {
 }
 
 apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)
+apply from: project(':react-native-config').projectDir.getPath() + "/dotenv.gradle"
 apply from: project(':react-native-config').projectDir.getPath() + "/dotenv.gradle"
