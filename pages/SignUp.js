@@ -46,7 +46,7 @@ const LoginPage = ({ history }) => {
     >
       <Header style={{ backgroundColor: "#242424" }}>
         <Body>
-          <Title>CLister</Title>
+          <Title>C-LISTER</Title>
         </Body>
         <Right>
           <Button onPress={() => history.push("/")} transparent>

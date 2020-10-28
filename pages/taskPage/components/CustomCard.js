@@ -1,10 +1,9 @@
 import React from "react";
-import { Body, CardItem, Icon } from "native-base";
+import { Body } from "native-base";
 import { Text, View } from "react-native";
 import firestore from "@react-native-firebase/firestore";
-import { useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilValue } from "recoil";
 import { currentListState, userState } from "../../../recoil/atoms";
-import Ripple from "react-native-material-ripple";
 import { Card, IconButton } from "react-native-paper";
 
 const CustomCard = ({ task, index, tasks, setTasks }) => {
@@ -44,25 +43,7 @@ const CustomCard = ({ task, index, tasks, setTasks }) => {
                 {task}
               </Text>
             </View>
-            {/*<Ripple*/}
-            {/*  rippleSize={100}*/}
-            {/*  style={{ flex: 1 }}*/}
-            {/*  onPress={async () => {*/}
-            {/*    let temp = [...tasks];*/}
-            {/*    temp.splice(index, 1);*/}
-            {/*    setTasks(temp);*/}
-            {/*    await firestore()*/}
-            {/*      .collection(currentUser)*/}
-            {/*      .doc(currentSection)*/}
-            {/*      .set({ task: temp });*/}
-            {/*  }}*/}
-            {/*>*/}
-            {/*  <Icon*/}
-            {/*    style={{ fontSize: 22, color: "rgb(29,161,242)" }}*/}
-            {/*    type="MaterialIcons"*/}
-            {/*    name="delete"*/}
-            {/*  />*/}
-            {/*</Ripple>*/}
+
             <IconButton
               onPress={async () => {
                 let temp = [...tasks];

@@ -1,34 +1,18 @@
-import React, { useEffect, useRef, useState } from "react";
-import {
-  View,
-  StyleSheet,
-  Dimensions,
-  ScrollView,
-  FlatList,
-} from "react-native";
+import React, { useEffect, useState } from "react";
+import { View, StyleSheet, Dimensions, FlatList } from "react-native";
 import { Redirect } from "react-router-native";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { currentListState, userState } from "../../recoil/atoms";
 import firestore from "@react-native-firebase/firestore";
 import CustomHeader from "./components/CustomHeader";
-import CustomActionButton from "./components/CustomActionButton";
-import CustomRbSheet from "./components/CustomRBSheet";
 import CustomCard from "./components/CustomCard";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import { NavigationContainer } from "@react-navigation/native";
 
 import AsyncStorage from "@react-native-community/async-storage";
-import {
-  List,
-  ListItem,
-  Text,
-  Icon,
-  Right,
-  Left,
-  Card,
-  Input,
-} from "native-base";
-import { Button, TextInput, Colors, Dialog, Portal } from "react-native-paper";
+import { List, ListItem, Text, Icon, Right, Left } from "native-base";
+import { Button, TextInput, Dialog, Portal } from "react-native-paper";
+import TaskHeader from "./components/TaskHeader";
 
 const Index = () => {
   const Drawer = createDrawerNavigator();
@@ -54,7 +38,6 @@ const CustomDrawer = ({ navigation }) => {
   const [currentList, setCurrentList] = useRecoilState(currentListState);
   const currentUser = useRecoilValue(userState);
   const [documents, setDocuments] = useState([]);
-  const inputRef = useRef();
   useEffect(() => {
     const ref = firestore().collection(currentUser);
     ref.onSnapshot((data) => {
@@ -218,11 +201,8 @@ const styles = StyleSheet.create({
 
 const TaskPage = ({ navigation }) => {
   const listName = useRecoilValue(currentListState);
-  const [componentHeight, setComponentHeight] = useState(100);
   const currentUser = useRecoilValue(userState);
   const [tasks, setTasks] = useState([]);
-  const [task, setTask] = useState("");
-  const refRBSheet = useRef();
   const currentList = useRecoilValue(currentListState);
   useEffect(() => {
     const subscriber = firestore()
@@ -248,116 +228,40 @@ const TaskPage = ({ navigation }) => {
 
   const listHeaderComponent = () => {
     return (
-      <Text
-        style={{
-          textAlign: "center",
-          fontWeight: "bold",
-          fontSize: 35,
-          color: "white",
-          marginVertical: 12,
-        }}
-      >
-        {listName}
-      </Text>
+      <View>
+        <TaskHeader
+          listName={listName}
+          navigation={navigation}
+          setTasks={setTasks}
+          tasks={tasks}
+          currentUser={currentUser}
+          currentList={currentList}
+          empty={false}
+        />
+      </View>
     );
   };
 
   return (
     <View style={styles.root}>
-      <CustomHeader refRBSheet={refRBSheet} navigation={navigation} />
-      <Text
-        style={{
-          textAlign: "center",
-          fontWeight: "bold",
-          fontSize: 35,
-          color: "white",
-          marginVertical: 12,
-        }}
-      >
-        {listName}
-      </Text>
-      <View
-        style={{
-          flexDirection: "row",
-          alignItems: "flex-end",
-          marginBottom: 20,
-        }}
-      >
-        <View style={{ flex: 1 }}>
-          <TextInput
-            // right={<TextInput.Icon name="plus" color="white" />}
-            value={task}
-            onChangeText={(text) => setTask(text)}
-            mode="outlined"
-            label="New Item"
-            theme={{
-              colors: {
-                placeholder: "#a3a3a3",
-                text: "white",
-                primary: "rgb(29,161,242)",
-                underlineColor: "transparent",
-                background: "#000000",
-              },
-            }}
-          />
-        </View>
-        <Button
-          onPress={async () => {
-            try {
-              await AsyncStorage.setItem("@list", currentList);
-            } catch (e) {
-              console.log(e);
-            }
-            let temp = [...tasks, task];
-            setTasks(temp);
-            setTask("");
-            await firestore()
-              .collection(currentUser)
-              .doc(currentList)
-              .set({ task: temp });
-          }}
-          mode={"contained"}
-          compact
-          style={{
-            height: 56,
-            display: "flex",
-            justifyContent: "center",
-            backgroundColor: "rgb(29,161,242)",
-          }}
-        >
-          hello
-        </Button>
-      </View>
-
       {tasks.length > 0 ? (
         <FlatList
+          ListHeaderComponent={listHeaderComponent}
           data={tasks}
           renderItem={renderItem}
           keyExtractor={(item, index) => index.toString()}
         />
       ) : (
-        <Text
-          style={{
-            textAlign: "center",
-            color: "white",
-            fontWeight: "bold",
-            fontSize: 19,
-          }}
-        >
-          No Item Found
-        </Text>
+        <TaskHeader
+          listName={listName}
+          navigation={navigation}
+          setTasks={setTasks}
+          tasks={tasks}
+          currentUser={currentUser}
+          currentList={currentList}
+          empty={true}
+        />
       )}
-
-      <CustomRbSheet
-        refRBSheet={refRBSheet}
-        task={task}
-        componentHeight={componentHeight}
-        setComponentHeight={setComponentHeight}
-        setTasks={setTasks}
-        tasks={tasks}
-        setTask={setTask}
-      />
-      {/*<CustomActionButton refRBSheet={refRBSheet} />*/}
     </View>
   );
 };
