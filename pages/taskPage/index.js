@@ -8,9 +8,10 @@ import CustomHeader from "./components/CustomHeader";
 import CustomCard from "./components/CustomCard";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import { NavigationContainer } from "@react-navigation/native";
+import DraggableFlatList from "react-native-draggable-flatlist";
 
 import AsyncStorage from "@react-native-community/async-storage";
-import { List, ListItem, Text, Icon, Right, Left } from "native-base";
+import { List, ListItem, Text, Icon, Right, Left, Toast } from "native-base";
 import { Button, TextInput, Dialog, Portal } from "react-native-paper";
 import TaskHeader from "./components/TaskHeader";
 
@@ -85,16 +86,32 @@ const CustomDrawer = ({ navigation }) => {
               mode={"text"}
               color="rgb(29,161,242)"
               onPress={async () => {
-                let temp = [...documents, dialogText];
-                setDocuments(temp);
-                setCurrentList(dialogText);
-                setDialog(false);
-                navigation.closeDrawer();
-                setDialogText("");
-                await firestore()
-                  .collection(currentUser)
-                  .doc(dialogText)
-                  .set({ task: [] });
+                if (dialogText === "") {
+                  Toast.show({
+                    text: "List Name Shouldn't Be Empty!",
+                    buttonText: "Okay",
+                    type: "danger",
+                  });
+                } else {
+                  let temp = [...documents, dialogText];
+                  setDocuments(temp);
+                  setCurrentList(dialogText);
+                  setDialog(false);
+                  navigation.closeDrawer();
+
+                  setDialogText("");
+                  await firestore()
+                    .collection(currentUser)
+                    .doc(dialogText)
+                    .set({ task: [] })
+                    .then(() => {
+                      Toast.show({
+                        text: "New List Created!",
+                        buttonText: "Okay",
+                        type: "success",
+                      });
+                    });
+                }
               }}
             >
               Add
@@ -164,6 +181,11 @@ const CustomDrawer = ({ navigation }) => {
                         temp.splice(index, 1);
                         setCurrentList("default");
                         setDocuments(temp);
+                        Toast.show({
+                          text: "List Deleted!",
+                          buttonText: "Okay",
+                          type: "success",
+                        });
                         await firestore()
                           .collection(currentUser)
                           .doc(document)
@@ -246,7 +268,18 @@ const TaskPage = ({ navigation }) => {
     <View style={styles.root}>
       {tasks.length > 0 ? (
         <FlatList
-          ListHeaderComponent={listHeaderComponent}
+          keyboardShouldPersistTaps={"handled"}
+          ListHeaderComponent={
+            <TaskHeader
+              listName={listName}
+              navigation={navigation}
+              setTasks={setTasks}
+              tasks={tasks}
+              currentUser={currentUser}
+              currentList={currentList}
+              empty={false}
+            />
+          }
           data={tasks}
           renderItem={renderItem}
           keyExtractor={(item, index) => index.toString()}

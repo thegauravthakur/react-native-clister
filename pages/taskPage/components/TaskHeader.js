@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { View } from "react-native";
 import CustomHeader from "./CustomHeader";
-import { Text } from "native-base";
+import { Text, Toast } from "native-base";
 import { Button, TextInput } from "react-native-paper";
 import AsyncStorage from "@react-native-community/async-storage";
 import firestore from "@react-native-firebase/firestore";
@@ -9,7 +9,6 @@ import firestore from "@react-native-firebase/firestore";
 const TaskHeader = ({
   listName,
   navigation,
-
   currentList,
   tasks,
   setTasks,
@@ -59,18 +58,31 @@ const TaskHeader = ({
           </View>
           <Button
             onPress={async () => {
-              try {
-                await AsyncStorage.setItem("@list", currentList);
-              } catch (e) {
-                console.log(e);
+              if (task === "") {
+                Toast.show({
+                  text: "Item should not be empty!",
+                  buttonText: "Okay",
+                  type: "danger",
+                });
+              } else {
+                try {
+                  await AsyncStorage.setItem("@list", currentList);
+                } catch (e) {
+                  console.log(e);
+                }
+                let temp = [...tasks, task];
+                setTasks(temp);
+                Toast.show({
+                  text: "Item Added!",
+                  buttonText: "Okay",
+                  type: "success",
+                });
+                setTask("");
+                await firestore()
+                  .collection(currentUser)
+                  .doc(currentList)
+                  .set({ task: temp });
               }
-              let temp = [...tasks, task];
-              setTasks(temp);
-              setTask("");
-              await firestore()
-                .collection(currentUser)
-                .doc(currentList)
-                .set({ task: temp });
             }}
             mode={"contained"}
             compact

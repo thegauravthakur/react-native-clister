@@ -22,6 +22,7 @@
     "react": "16.13.1",
     "react-native": "0.63.3",
     "react-native-config": "^1.3.3",
+    "react-native-draggable-flatlist": "^2.4.0",
     "react-native-gesture-handler": "^1.8.0",
     "react-native-paper": "^4.2.0",
     "react-native-reanimated": "^1.13.1",
@@ -32,7 +33,8 @@
     "react-native-vector-icons": "^7.1.0",
     "react-router-native": "^5.2.0",
     "react-router-native-stack": "^0.0.16",
-    "recoil": "https://github.com/facebookexperimental/Recoil.git#nightly"
+    "recoil": "https://github.com/facebookexperimental/Recoil.git#nightly",
+    "yarn": "^1.22.10"
   },
   "devDependencies": {
     "@babel/core": "^7.8.4",

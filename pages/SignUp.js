@@ -3,36 +3,22 @@ import {
   Text,
   View,
   StyleSheet,
-  ActivityIndicator,
   Dimensions,
   ProgressBarAndroid,
 } from "react-native";
-import auth from "@react-native-firebase/auth";
 import { useRecoilState } from "recoil";
 import { userState } from "../recoil/atoms";
-import AsyncStorage from "@react-native-community/async-storage";
 import Config from "react-native-config";
 import Axios from "axios";
 
-import {
-  Label,
-  Header,
-  Left,
-  Body,
-  Right,
-  Title,
-  Icon,
-  Item,
-  Input,
-  Toast,
-} from "native-base";
+import { Header, Body, Right, Title, Toast } from "native-base";
 import { Redirect } from "react-router-native";
 import { TextInput, Button } from "react-native-paper";
 
 const LoginPage = ({ history }) => {
   const [loading, setLoading] = useState(false);
-  const [email, setEmail] = useState();
-  const [password, setPassword] = useState();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [currentUser, setCurrentUser] = useRecoilState(userState);
   if (currentUser) {
     return <Redirect to={"/tasks/default"} />;
@@ -64,6 +50,7 @@ const LoginPage = ({ history }) => {
       <View style={style.root}>
         <Text style={style.title}>Sign Up</Text>
         <TextInput
+          textContentType={"none"}
           autoCompleteType={"email"}
           left={<TextInput.Icon name="email" color="white" />}
           keyboardType={"email-address"}
@@ -82,16 +69,9 @@ const LoginPage = ({ history }) => {
             },
           }}
         />
-        {/*<Item style={{ marginBottom: 20 }} floatingLabel>*/}
-        {/*  <Label>Username</Label>*/}
-        {/*  <Input*/}
-        {/*    autoCompleteType={"email"}*/}
-        {/*    keyboardType={"email-address"}*/}
-        {/*    value={email}*/}
-        {/*    onChangeText={(text) => setEmail(text)}*/}
-        {/*  />*/}
-        {/*</Item>*/}
+
         <TextInput
+          textContentType={"none"}
           secureTextEntry={true}
           autoCompleteType={"password"}
           left={<TextInput.Icon name="lock" color="white" />}
@@ -110,45 +90,7 @@ const LoginPage = ({ history }) => {
             },
           }}
         />
-        {/*{loading ? (*/}
-        {/*  <ActivityIndicator color="teal" />*/}
-        {/*) : (*/}
-        {/*  <Button*/}
-        {/*    full*/}
-        {/*    onPress={async () => {*/}
-        {/*      setLoading(true);*/}
-        {/*      await AsyncStorage.removeItem("@list");*/}
-        {/*      await auth()*/}
-        {/*        .signInWithEmailAndPassword(email, password)*/}
-        {/*        .then(({ user }) => {*/}
-        {/*          setLoading(false);*/}
-        {/*          const { uid } = user;*/}
-        {/*          console.log(uid);*/}
-        {/*          setCurrentUser(uid);*/}
-        {/*        })*/}
-        {/*        .catch((error) => {*/}
-        {/*          setLoading(false);*/}
-        {/*          switch (error.code) {*/}
-        {/*            case "auth/user-not-found":*/}
-        {/*              Toast.show({*/}
-        {/*                text: "User Not Found",*/}
-        {/*                buttonText: "Okay",*/}
-        {/*                type: "danger",*/}
-        {/*              });*/}
-        {/*              break;*/}
-        {/*            default:*/}
-        {/*              Toast.show({*/}
-        {/*                text: error.code,*/}
-        {/*                buttonText: "Okay",*/}
-        {/*                type: "danger",*/}
-        {/*              });*/}
-        {/*          }*/}
-        {/*        });*/}
-        {/*    }}*/}
-        {/*  >*/}
-        {/*    <Text style={{ color: "white" }}>Login</Text>*/}
-        {/*  </Button>*/}
-        {/*)}*/}
+
         <Button
           onPress={() => {
             setLoading(true);
@@ -176,21 +118,40 @@ const LoginPage = ({ history }) => {
                 content: [{ type: "text/plain", value: `you otp is ${otp}` }],
               },
             };
-
-            Axios.request(options)
-              .then(function (response) {
-                setLoading(false);
-                history.push({
-                  pathname: "/verifyUser",
-                  state: { email, password, otp },
-                });
-                console.log("OTP SENT");
-              })
-              .catch(function (error) {
-                setLoading(false);
-                console.log(Config.API_URL);
-                console.error(error);
+            let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+            if (!reg.test(email)) {
+              Toast.show({
+                text: "Enter Valid Email!",
+                buttonText: "Okay",
+                type: "danger",
               });
+              setLoading(false);
+            } else if (password.length < 6) {
+              Toast.show({
+                text: "Password should be at least six",
+                buttonText: "Okay",
+                type: "danger",
+              });
+              setLoading(false);
+            } else {
+              Axios.request(options)
+                .then(function (response) {
+                  setLoading(false);
+                  history.push({
+                    pathname: "/verifyUser",
+                    state: { email, password, otp },
+                  });
+                  console.log("OTP SENT");
+                })
+                .catch(function (error) {
+                  setLoading(false);
+                  Toast.show({
+                    text: error.message,
+                    buttonText: "Okay",
+                    type: "danger",
+                  });
+                });
+            }
           }}
           loading={loading}
           mode={"contained"}

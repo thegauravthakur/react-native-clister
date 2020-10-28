@@ -3,7 +3,6 @@ import {
   Text,
   View,
   StyleSheet,
-  ActivityIndicator,
   Dimensions,
   ProgressBarAndroid,
 } from "react-native";
@@ -11,25 +10,14 @@ import auth from "@react-native-firebase/auth";
 import { useRecoilState } from "recoil";
 import { userState } from "../recoil/atoms";
 import AsyncStorage from "@react-native-community/async-storage";
-import {
-  Label,
-  Header,
-  Left,
-  Body,
-  Right,
-  Title,
-  Icon,
-  Item,
-  Input,
-  Toast,
-} from "native-base";
+import { Header, Body, Right, Title, Toast } from "native-base";
 import { Redirect } from "react-router-native";
 import { TextInput, Button, ProgressBar } from "react-native-paper";
 
 const LoginPage = ({ history }) => {
   const [loading, setLoading] = useState(false);
-  const [email, setEmail] = useState();
-  const [password, setPassword] = useState();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [currentUser, setCurrentUser] = useRecoilState(userState);
   if (currentUser) {
     return <Redirect to={"/tasks/default"} />;
@@ -61,6 +49,7 @@ const LoginPage = ({ history }) => {
       <View style={style.root}>
         <Text style={style.title}>Login</Text>
         <TextInput
+          textContentType={"emailAddress"}
           autoCompleteType={"email"}
           left={<TextInput.Icon name="email" color="white" />}
           keyboardType={"email-address"}
@@ -79,16 +68,9 @@ const LoginPage = ({ history }) => {
             },
           }}
         />
-        {/*<Item style={{ marginBottom: 20 }} floatingLabel>*/}
-        {/*  <Label>Username</Label>*/}
-        {/*  <Input*/}
-        {/*    autoCompleteType={"email"}*/}
-        {/*    keyboardType={"email-address"}*/}
-        {/*    value={email}*/}
-        {/*    onChangeText={(text) => setEmail(text)}*/}
-        {/*  />*/}
-        {/*</Item>*/}
+
         <TextInput
+          textContentType={"password"}
           secureTextEntry={true}
           autoCompleteType={"password"}
           left={<TextInput.Icon name="lock" color="white" />}
@@ -107,75 +89,54 @@ const LoginPage = ({ history }) => {
             },
           }}
         />
-        {/*{loading ? (*/}
-        {/*  <ActivityIndicator color="teal" />*/}
-        {/*) : (*/}
-        {/*  <Button*/}
-        {/*    full*/}
-        {/*    onPress={async () => {*/}
-        {/*      setLoading(true);*/}
-        {/*      await AsyncStorage.removeItem("@list");*/}
-        {/*      await auth()*/}
-        {/*        .signInWithEmailAndPassword(email, password)*/}
-        {/*        .then(({ user }) => {*/}
-        {/*          setLoading(false);*/}
-        {/*          const { uid } = user;*/}
-        {/*          console.log(uid);*/}
-        {/*          setCurrentUser(uid);*/}
-        {/*        })*/}
-        {/*        .catch((error) => {*/}
-        {/*          setLoading(false);*/}
-        {/*          switch (error.code) {*/}
-        {/*            case "auth/user-not-found":*/}
-        {/*              Toast.show({*/}
-        {/*                text: "User Not Found",*/}
-        {/*                buttonText: "Okay",*/}
-        {/*                type: "danger",*/}
-        {/*              });*/}
-        {/*              break;*/}
-        {/*            default:*/}
-        {/*              Toast.show({*/}
-        {/*                text: error.code,*/}
-        {/*                buttonText: "Okay",*/}
-        {/*                type: "danger",*/}
-        {/*              });*/}
-        {/*          }*/}
-        {/*        });*/}
-        {/*    }}*/}
-        {/*  >*/}
-        {/*    <Text style={{ color: "white" }}>Login</Text>*/}
-        {/*  </Button>*/}
-        {/*)}*/}
+
         <Button
           onPress={async () => {
             setLoading(true);
             await AsyncStorage.removeItem("@list");
-            await auth()
-              .signInWithEmailAndPassword(email, password)
-              .then(({ user }) => {
-                setLoading(false);
-                const { uid } = user;
-                console.log(uid);
-                setCurrentUser(uid);
-              })
-              .catch((error) => {
-                setLoading(false);
-                switch (error.code) {
-                  case "auth/user-not-found":
-                    Toast.show({
-                      text: "User Not Found",
-                      buttonText: "Okay",
-                      type: "danger",
-                    });
-                    break;
-                  default:
-                    Toast.show({
-                      text: error.code,
-                      buttonText: "Okay",
-                      type: "danger",
-                    });
-                }
+            if (email === "") {
+              Toast.show({
+                text: "Email can't be empty!",
+                buttonText: "Okay",
+                type: "danger",
               });
+              setLoading(false);
+            } else if (password === "") {
+              Toast.show({
+                text: "Password can't be empty!",
+                buttonText: "Okay",
+                type: "danger",
+              });
+              setLoading(false);
+            } else {
+              console.log(email);
+              await auth()
+                .signInWithEmailAndPassword(email, password)
+                .then(({ user }) => {
+                  setLoading(false);
+                  const { uid } = user;
+                  console.log(uid);
+                  setCurrentUser(uid);
+                })
+                .catch((error) => {
+                  setLoading(false);
+                  switch (error.code) {
+                    case "auth/user-not-found":
+                      Toast.show({
+                        text: "User Not Found",
+                        buttonText: "Okay",
+                        type: "danger",
+                      });
+                      break;
+                    default:
+                      Toast.show({
+                        text: error.code,
+                        buttonText: "Okay",
+                        type: "danger",
+                      });
+                  }
+                });
+            }
           }}
           loading={loading}
           mode={"contained"}

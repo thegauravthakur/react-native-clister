@@ -1,5 +1,5 @@
 import React from "react";
-import { Body } from "native-base";
+import { Body, Toast } from "native-base";
 import { Text, View } from "react-native";
 import firestore from "@react-native-firebase/firestore";
 import { useRecoilValue } from "recoil";
@@ -48,6 +48,11 @@ const CustomCard = ({ task, index, tasks, setTasks }) => {
               onPress={async () => {
                 let temp = [...tasks];
                 temp.splice(index, 1);
+                Toast.show({
+                  text: "Item Deleted!",
+                  buttonText: "Okay",
+                  type: "success",
+                });
                 setTasks(temp);
                 await firestore()
                   .collection(currentUser)
