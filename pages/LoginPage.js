@@ -7,36 +7,79 @@ import {
   ProgressBarAndroid,
 } from "react-native";
 import auth from "@react-native-firebase/auth";
-import { useRecoilState } from "recoil";
-import { userState } from "../recoil/atoms";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { currentThemeState, userState } from "../recoil/atoms";
 import AsyncStorage from "@react-native-community/async-storage";
 import { Header, Body, Right, Title, Toast } from "native-base";
 import { Redirect } from "react-router-native";
-import { TextInput, Button, ProgressBar } from "react-native-paper";
+import { TextInput, Button, ProgressBar, IconButton } from "react-native-paper";
+import { PRIMARY_LIGHT } from "../constants/colors";
 
 const LoginPage = ({ history }) => {
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [currentUser, setCurrentUser] = useRecoilState(userState);
+  const [currentTheme, setCurrentTheme] = useRecoilState(currentThemeState);
   if (currentUser) {
     return <Redirect to={"/tasks/default"} />;
   }
+  const style = StyleSheet.create({
+    root: { marginHorizontal: 7 },
+    title: {
+      alignSelf: "center",
+      color: currentTheme === "dark" ? "rgb(29,161,242)" : "teal",
+      fontSize: 50,
+    },
+    button: {
+      width: 200,
+    },
+  });
   return (
     <View
       style={{
-        backgroundColor: "black",
+        backgroundColor: currentTheme === "dark" ? "black" : "white",
         minHeight: Dimensions.get("window").height,
       }}
     >
-      <Header style={{ backgroundColor: "#242424" }}>
+      <Header
+        style={{
+          backgroundColor: currentTheme === "dark" ? "#242424" : PRIMARY_LIGHT,
+        }}
+      >
         <Body>
           <Title>C-LISTER</Title>
         </Body>
         <Right>
-          <Button onPress={() => history.push("/signUp")} transparent>
-            <Title>Sign Up</Title>
-          </Button>
+          <View style={{ flexDirection: "row" }}>
+            <View>
+              {currentTheme === "light" ? (
+                <IconButton
+                  onPress={async () => {
+                    setCurrentTheme("dark");
+
+                    await AsyncStorage.setItem("@theme", "dark");
+                  }}
+                  icon={"weather-night"}
+                  color={"white"}
+                />
+              ) : (
+                <IconButton
+                  onPress={async () => {
+                    setCurrentTheme("light");
+                    await AsyncStorage.setItem("@theme", "light");
+                  }}
+                  icon={"white-balance-sunny"}
+                  color={"white"}
+                />
+              )}
+            </View>
+            <View>
+              <Button onPress={() => history.push("/signUp")} transparent>
+                <Title>Sign Up</Title>
+              </Button>
+            </View>
+          </View>
         </Right>
       </Header>
       {loading ? (
@@ -51,7 +94,12 @@ const LoginPage = ({ history }) => {
         <TextInput
           textContentType={"emailAddress"}
           autoCompleteType={"email"}
-          left={<TextInput.Icon name="email" color="white" />}
+          left={
+            <TextInput.Icon
+              name="email"
+              color={currentTheme === "dark" ? "white" : PRIMARY_LIGHT}
+            />
+          }
           keyboardType={"email-address"}
           style={{ marginBottom: 20 }}
           value={email}
@@ -61,10 +109,11 @@ const LoginPage = ({ history }) => {
           theme={{
             colors: {
               placeholder: "#a3a3a3",
-              text: "white",
-              primary: "rgb(29,161,242)",
+              text: currentTheme === "dark" ? "white" : "black",
+              primary:
+                currentTheme === "dark" ? "rgb(29,161,242)" : PRIMARY_LIGHT,
               underlineColor: "transparent",
-              background: "#000000",
+              background: currentTheme === "dark" ? "#000000" : "white",
             },
           }}
         />
@@ -73,7 +122,12 @@ const LoginPage = ({ history }) => {
           textContentType={"password"}
           secureTextEntry={true}
           autoCompleteType={"password"}
-          left={<TextInput.Icon name="lock" color="white" />}
+          left={
+            <TextInput.Icon
+              name="lock"
+              color={currentTheme === "dark" ? "white" : PRIMARY_LIGHT}
+            />
+          }
           style={{ marginBottom: 20 }}
           value={password}
           onChangeText={(text) => setPassword(text)}
@@ -82,10 +136,11 @@ const LoginPage = ({ history }) => {
           theme={{
             colors: {
               placeholder: "#a3a3a3",
-              text: "white",
-              primary: "rgb(29,161,242)",
+              text: currentTheme === "dark" ? "white" : "black",
+              primary:
+                currentTheme === "dark" ? "rgb(29,161,242)" : PRIMARY_LIGHT,
               underlineColor: "transparent",
-              background: "#000000",
+              background: currentTheme === "dark" ? "#000000" : "white",
             },
           }}
         />
@@ -140,26 +195,19 @@ const LoginPage = ({ history }) => {
           }}
           loading={loading}
           mode={"contained"}
-          style={{ backgroundColor: "rgb(29,161,242)" }}
+          style={{
+            backgroundColor:
+              currentTheme === "dark" ? "rgb(29,161,242)" : PRIMARY_LIGHT,
+          }}
           disabled={loading}
         >
-          Sign In
+          <Text style={{ color: currentTheme === "dark" ? "black" : "white" }}>
+            SIGN IN
+          </Text>
         </Button>
       </View>
     </View>
   );
 };
-
-const style = StyleSheet.create({
-  root: {},
-  title: {
-    alignSelf: "center",
-    color: "rgb(29,161,242)",
-    fontSize: 50,
-  },
-  button: {
-    width: 200,
-  },
-});
 
 export default LoginPage;

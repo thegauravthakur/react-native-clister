@@ -9,3 +9,8 @@ export const currentListState = atom({
   key: "currentList",
   default: "default",
 });
+
+export const currentThemeState = atom({
+  key: "currentThemeState",
+  default: "dark",
+});

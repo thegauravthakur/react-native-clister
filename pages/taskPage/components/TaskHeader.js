@@ -5,6 +5,9 @@ import { Text, Toast } from "native-base";
 import { Button, TextInput } from "react-native-paper";
 import AsyncStorage from "@react-native-community/async-storage";
 import firestore from "@react-native-firebase/firestore";
+import { useRecoilValue } from "recoil";
+import { currentThemeState } from "../../../recoil/atoms";
+import { PRIMARY_LIGHT } from "../../../constants/colors";
 
 const TaskHeader = ({
   listName,
@@ -16,6 +19,7 @@ const TaskHeader = ({
   empty,
 }) => {
   const [task, setTask] = useState("");
+  const currentTheme = useRecoilValue(currentThemeState);
   return (
     <View>
       <View>
@@ -25,7 +29,7 @@ const TaskHeader = ({
             textAlign: "center",
             fontWeight: "bold",
             fontSize: 35,
-            color: "white",
+            color: currentTheme === "dark" ? "white" : "teal",
             marginVertical: 12,
           }}
         >
@@ -36,6 +40,7 @@ const TaskHeader = ({
             flexDirection: "row",
             alignItems: "flex-end",
             marginBottom: 20,
+            marginHorizontal: 7,
           }}
         >
           <View style={{ flex: 1 }}>
@@ -48,10 +53,11 @@ const TaskHeader = ({
               theme={{
                 colors: {
                   placeholder: "#a3a3a3",
-                  text: "white",
-                  primary: "rgb(29,161,242)",
+                  text: currentTheme === "dark" ? "white" : "black",
+                  primary:
+                    currentTheme === "dark" ? "rgb(29,161,242)" : PRIMARY_LIGHT,
                   underlineColor: "transparent",
-                  background: "#000000",
+                  background: currentTheme === "dark" ? "#000000" : "white",
                 },
               }}
             />
@@ -91,10 +97,15 @@ const TaskHeader = ({
               minWidth: 56,
               display: "flex",
               justifyContent: "center",
-              backgroundColor: "rgb(29,161,242)",
+              backgroundColor:
+                currentTheme === "dark" ? "rgb(29,161,242)" : PRIMARY_LIGHT,
             }}
           >
-            Add
+            <Text
+              style={{ color: currentTheme === "dark" ? "black" : "white" }}
+            >
+              ADD
+            </Text>
           </Button>
         </View>
 

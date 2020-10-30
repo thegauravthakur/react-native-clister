@@ -3,14 +3,27 @@ import { Body, Toast } from "native-base";
 import { Text, View } from "react-native";
 import firestore from "@react-native-firebase/firestore";
 import { useRecoilValue } from "recoil";
-import { currentListState, userState } from "../../../recoil/atoms";
+import {
+  currentListState,
+  currentThemeState,
+  userState,
+} from "../../../recoil/atoms";
 import { Card, IconButton } from "react-native-paper";
+import { PRIMARY_LIGHT } from "../../../constants/colors";
 
 const CustomCard = ({ task, index, tasks, setTasks }) => {
   const currentSection = useRecoilValue(currentListState);
   const currentUser = useRecoilValue(userState);
+  const currentTheme = useRecoilValue(currentThemeState);
   return (
-    <Card style={{ backgroundColor: "#3d3d3d", marginBottom: 20 }}>
+    <Card
+      style={{
+        backgroundColor: currentTheme === "dark" ? "#3d3d3d" : "white",
+        marginBottom: 20,
+        elevation: 12,
+        marginHorizontal: 7,
+      }}
+    >
       <Card.Content>
         <Body>
           <View
@@ -26,7 +39,8 @@ const CustomCard = ({ task, index, tasks, setTasks }) => {
                 style={{
                   flex: 1,
                   fontWeight: "bold",
-                  color: "rgb(29,161,242)",
+                  color:
+                    currentTheme === "dark" ? "rgb(29,161,242)" : PRIMARY_LIGHT,
                   fontSize: 18,
                 }}
               >
@@ -37,7 +51,7 @@ const CustomCard = ({ task, index, tasks, setTasks }) => {
                   flex: 11,
                   fontSize: 16,
                   fontWeight: "normal",
-                  color: "white",
+                  color: currentTheme === "dark" ? "white" : "teal",
                 }}
               >
                 {task}
@@ -60,8 +74,10 @@ const CustomCard = ({ task, index, tasks, setTasks }) => {
                   .set({ task: temp });
               }}
               icon="delete"
-              style={{ margin: -5, padding: 0 }}
-              color={"rgb(29,161,242)"}
+              style={{ margin: -2, padding: 0 }}
+              color={
+                currentTheme === "dark" ? "rgb(29,161,242)" : PRIMARY_LIGHT
+              }
             />
           </View>
         </Body>

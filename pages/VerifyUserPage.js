@@ -9,16 +9,17 @@ import {
 import AsyncStorage from "@react-native-community/async-storage";
 import auth from "@react-native-firebase/auth";
 import firestore from "@react-native-firebase/firestore";
-import { Toast } from "native-base";
+import { Body, Header, Right, Title, Toast } from "native-base";
 import { useRecoilState } from "recoil";
-import { userState } from "../recoil/atoms";
+import { currentThemeState, userState } from "../recoil/atoms";
 import { Redirect } from "react-router-native";
-import { TextInput, Button } from "react-native-paper";
+import { TextInput, Button, IconButton } from "react-native-paper";
+import { PRIMARY_LIGHT } from "../constants/colors";
 
 const VerifyUserPage = ({ location }) => {
   const [loading, setLoading] = useState(false);
   const [userOtp, setUserOtp] = useState("");
-  const { email, password, otp } = location.state;
+  const { email, password, otp } = { email: "", password: "", otp: "" };
   useEffect(() => {
     Toast.show({
       text: `OTP send to ${email}`,
@@ -30,13 +31,44 @@ const VerifyUserPage = ({ location }) => {
   if (currentUser) {
     return <Redirect to={"/tasks/default"} />;
   }
+  const [currentTheme, setCurrentTheme] = useRecoilState(currentThemeState);
   return (
     <View
       style={{
-        backgroundColor: "black",
+        backgroundColor: currentTheme === "dark" ? "black" : "white",
         minHeight: Dimensions.get("window").height,
       }}
     >
+      <Header
+        style={{
+          backgroundColor: currentTheme === "dark" ? "#242424" : PRIMARY_LIGHT,
+        }}
+      >
+        <Body>
+          <Title>C-LISTER</Title>
+        </Body>
+        <Right>
+          {currentTheme === "light" ? (
+            <IconButton
+              onPress={async () => {
+                setCurrentTheme("dark");
+                await AsyncStorage.setItem("@theme", "dark");
+              }}
+              icon={"weather-night"}
+              color={"white"}
+            />
+          ) : (
+            <IconButton
+              onPress={async () => {
+                setCurrentTheme("light");
+                await AsyncStorage.setItem("@theme", "light");
+              }}
+              icon={"white-balance-sunny"}
+              color={"white"}
+            />
+          )}
+        </Right>
+      </Header>
       {loading ? (
         <ProgressBarAndroid
           color={"teal"}
@@ -50,21 +82,25 @@ const VerifyUserPage = ({ location }) => {
           marginTop: 20,
           fontSize: 20,
           fontWeight: "bold",
-          color: "white",
+          color: currentTheme === "dark" ? "white" : "black",
         }}
       >
         Enter the OTP
       </Text>
       <TextInput
-        style={{ marginBottom: 20 }}
+        style={{
+          marginBottom: 20,
+          borderBottomWidth: currentTheme === "light" ? 0.1 : 0,
+        }}
         value={userOtp}
         onChangeText={(text) => setUserOtp(text)}
         label="OTP"
         theme={{
           colors: {
             placeholder: "#a3a3a3",
-            text: "white",
-            primary: "rgb(29,161,242)",
+            text: currentTheme === "dark" ? "white" : "black",
+            primary:
+              currentTheme === "dark" ? "rgb(29,161,242)" : PRIMARY_LIGHT,
             underlineColor: "transparent",
             background: "transparent",
           },
@@ -118,10 +154,15 @@ const VerifyUserPage = ({ location }) => {
         }}
         loading={loading}
         mode={"contained"}
-        style={{ backgroundColor: "rgb(29,161,242)" }}
+        style={{
+          backgroundColor:
+            currentTheme === "dark" ? "rgb(29,161,242)" : PRIMARY_LIGHT,
+        }}
         disabled={loading}
       >
-        Verify
+        <Text style={{ color: currentTheme === "dark" ? "black" : "white" }}>
+          VERIFY
+        </Text>
       </Button>
     </View>
   );
