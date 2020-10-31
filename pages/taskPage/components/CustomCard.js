@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Body, Toast } from "native-base";
 import { Text, View } from "react-native";
 import firestore from "@react-native-firebase/firestore";
@@ -11,10 +11,13 @@ import {
 import { Card, IconButton } from "react-native-paper";
 import { PRIMARY_LIGHT } from "../../../constants/colors";
 
-const CustomCard = ({ task, index, tasks, setTasks }) => {
+const CustomCard = ({ task, index, tasks, setTasks, rowMap }) => {
   const currentSection = useRecoilValue(currentListState);
   const currentUser = useRecoilValue(userState);
   const currentTheme = useRecoilValue(currentThemeState);
+  useEffect(() => {
+    console.log(rowMap);
+  });
   return (
     <Card
       style={{

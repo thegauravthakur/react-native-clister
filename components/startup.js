@@ -17,7 +17,7 @@ const Startup = ({ children }) => {
   const [currentTheme, setCurrentTheme] = useRecoilState(currentThemeState);
   useEffect(() => {
     const fetchUser = async () => {
-      SplashScreen.hide();
+      // SplashScreen.hide();
       await auth().onAuthStateChanged(async (user) => {
         try {
           console.log(user);

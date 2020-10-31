@@ -14,7 +14,9 @@ import { currentThemeState } from "./recoil/atoms";
 
 const App = () => {
   const setCurrentTheme = useSetRecoilState(currentThemeState);
-  useEffect(async () => {}, []);
+  useEffect(() => {
+    (async () => SplashScreen.hide())();
+  }, []);
   return (
     <RecoilRoot>
       <PaperProvider>

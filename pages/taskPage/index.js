@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { View, StyleSheet, Dimensions, FlatList } from "react-native";
 import { Redirect } from "react-router-native";
 import { useRecoilState, useRecoilValue } from "recoil";
+import { SwipeListView } from "react-native-swipe-list-view";
 import {
   currentListState,
   currentThemeState,
@@ -15,9 +16,16 @@ import { NavigationContainer } from "@react-navigation/native";
 
 import AsyncStorage from "@react-native-community/async-storage";
 import { List, ListItem, Text, Icon, Right, Left, Toast } from "native-base";
-import { Button, TextInput, Dialog, Portal } from "react-native-paper";
+import {
+  Button,
+  TextInput,
+  Dialog,
+  Portal,
+  IconButton,
+} from "react-native-paper";
 import TaskHeader from "./components/TaskHeader";
 import { PRIMARY_LIGHT } from "../../constants/colors";
+
 export const useInitialRender = (): boolean => {
   const [isInitialRender, setIsInitialRender] = useState(false);
 
@@ -276,6 +284,10 @@ const TaskPage = ({ navigation }) => {
   const [tasks, setTasks] = useState([]);
   const currentList = useRecoilValue(currentListState);
   const currentTheme = useRecoilValue(currentThemeState);
+  const [dialogText, setDialogText] = useState("");
+  const [dialog, setDialog] = useState(false);
+  const [index, setIndex] = useState();
+  const dialogRef = useRef();
   const styles = StyleSheet.create({
     root: {
       minHeight: Dimensions.get("window").height,
@@ -298,16 +310,104 @@ const TaskPage = ({ navigation }) => {
     return <Redirect to={"/"} />;
   }
 
-  const renderItem = ({ item, index }) => {
+  const renderItem = (data, rowMap) => {
     return (
-      <CustomCard tasks={tasks} setTasks={setTasks} task={item} index={index} />
+      <CustomCard tasks={tasks} setTasks={setTasks} task={data} index={1} />
     );
   };
 
   return (
     <View style={styles.root}>
+      <Portal>
+        <Dialog
+          style={{
+            backgroundColor: currentTheme === "dark" ? "#3d3d3d" : "white",
+          }}
+          visible={dialog}
+          onDismiss={() => setDialog(false)}
+        >
+          <Dialog.Title
+            style={{ color: currentTheme === "dark" ? "white" : "black" }}
+          >
+            Enter The New Name
+          </Dialog.Title>
+          <Dialog.Content>
+            <TextInput
+              autoFocus
+              selectTextOnFocus
+              style={{
+                marginBottom: 20,
+                borderBottomWidth: currentTheme === "light" ? 0.1 : 0,
+              }}
+              value={dialogText}
+              onChangeText={(text) => setDialogText(text)}
+              label="Enter List Name"
+              theme={{
+                colors: {
+                  placeholder: currentTheme === "dark" ? "#a3a3a3" : "black",
+                  text: currentTheme === "dark" ? "white" : "black",
+                  primary:
+                    currentTheme === "dark" ? "rgb(29,161,242)" : PRIMARY_LIGHT,
+                  underlineColor: "transparent",
+                  background: "transparent",
+                },
+              }}
+            />
+          </Dialog.Content>
+          <Dialog.Actions>
+            <Button
+              mode={"text"}
+              color="rgb(29,161,242)"
+              onPress={() => {
+                dialogRef.current.safeCloseOpenRow();
+                setDialog(false);
+              }}
+            >
+              Cancel
+            </Button>
+            <Button
+              mode={"text"}
+              color="rgb(29,161,242)"
+              onPress={async () => {
+                if (dialogText === "") {
+                  Toast.show({
+                    text: "Item should not be empty!",
+                    buttonText: "Okay",
+                    type: "danger",
+                  });
+                } else {
+                  try {
+                    await AsyncStorage.setItem("@list", currentList);
+                  } catch (e) {
+                    console.log(e);
+                  }
+                  let temp = [...tasks];
+                  temp[index] = dialogText;
+                  setTasks(temp);
+                  dialogRef.current.safeCloseOpenRow();
+                  setDialog(false);
+                  Toast.show({
+                    text: "Name Changed!",
+                    buttonText: "Okay",
+                    type: "success",
+                  });
+                  await firestore()
+                    .collection(currentUser)
+                    .doc(currentList)
+                    .set({ task: temp });
+                }
+              }}
+            >
+              Add
+            </Button>
+          </Dialog.Actions>
+        </Dialog>
+      </Portal>
       {tasks.length > 0 ? (
-        <FlatList
+        <SwipeListView
+          closeOnRowPress
+          ref={dialogRef}
+          keyExtractor={(item, index) => index.toString()}
           keyboardShouldPersistTaps={"handled"}
           ListHeaderComponent={
             <TaskHeader
@@ -321,10 +421,60 @@ const TaskPage = ({ navigation }) => {
             />
           }
           data={tasks}
-          renderItem={renderItem}
-          keyExtractor={(item, index) => index.toString()}
+          renderItem={(data, rowMap) => (
+            <CustomCard
+              tasks={tasks}
+              rowMap={rowMap}
+              setTasks={setTasks}
+              task={data.item}
+              index={data.index}
+            />
+          )}
+          renderHiddenItem={(data, rowMap) => (
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "flex-end",
+                paddingTop: 7,
+                paddingRight: 5,
+              }}
+            >
+              <IconButton
+                onPress={() => {
+                  setDialog(true);
+                  setDialogText(data.item);
+                  setIndex(data.index);
+                }}
+                icon="pencil"
+                style={{}}
+                color={
+                  currentTheme === "dark" ? "rgb(29,161,242)" : PRIMARY_LIGHT
+                }
+              />
+            </View>
+          )}
+          leftOpenValue={50}
+          rightOpenValue={-50}
+          disableRightSwipe
         />
       ) : (
+        // <FlatList
+        //   keyboardShouldPersistTaps={"handled"}
+        //   ListHeaderComponent={
+        //     <TaskHeader
+        //       listName={listName}
+        //       navigation={navigation}
+        //       setTasks={setTasks}
+        //       tasks={tasks}
+        //       currentUser={currentUser}
+        //       currentList={currentList}
+        //       empty={false}
+        //     />
+        //   }
+        //   data={tasks}
+        //   renderItem={renderItem}
+        //   keyExtractor={(item, index) => index.toString()}
+        // />
         <TaskHeader
           listName={listName}
           navigation={navigation}
