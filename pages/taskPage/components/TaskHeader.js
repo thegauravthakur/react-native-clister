@@ -20,6 +20,33 @@ const TaskHeader = ({
 }) => {
   const [task, setTask] = useState("");
   const currentTheme = useRecoilValue(currentThemeState);
+  const onSubmitHandler = async () => {
+    if (task === "") {
+      Toast.show({
+        text: "Item should not be empty!",
+        buttonText: "Okay",
+        type: "danger",
+      });
+    } else {
+      try {
+        await AsyncStorage.setItem("@list", currentList);
+      } catch (e) {
+        console.log(e);
+      }
+      let temp = [...tasks, task];
+      setTasks(temp);
+      Toast.show({
+        text: "Item Added!",
+        buttonText: "Okay",
+        type: "success",
+      });
+      setTask("");
+      await firestore()
+        .collection(currentUser)
+        .doc(currentList)
+        .set({ task: temp });
+    }
+  };
   return (
     <View>
       <View>
@@ -46,6 +73,7 @@ const TaskHeader = ({
           <View style={{ flex: 1 }}>
             <TextInput
               // right={<TextInput.Icon name="plus" color="white" />}
+              onSubmitEditing={onSubmitHandler}
               value={task}
               onChangeText={(text) => setTask(text)}
               mode="outlined"
@@ -63,33 +91,7 @@ const TaskHeader = ({
             />
           </View>
           <Button
-            onPress={async () => {
-              if (task === "") {
-                Toast.show({
-                  text: "Item should not be empty!",
-                  buttonText: "Okay",
-                  type: "danger",
-                });
-              } else {
-                try {
-                  await AsyncStorage.setItem("@list", currentList);
-                } catch (e) {
-                  console.log(e);
-                }
-                let temp = [...tasks, task];
-                setTasks(temp);
-                Toast.show({
-                  text: "Item Added!",
-                  buttonText: "Okay",
-                  type: "success",
-                });
-                setTask("");
-                await firestore()
-                  .collection(currentUser)
-                  .doc(currentList)
-                  .set({ task: temp });
-              }
-            }}
+            onPress={onSubmitHandler}
             mode={"contained"}
             compact
             style={{

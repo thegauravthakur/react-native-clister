@@ -9,7 +9,6 @@ import { Root } from "native-base";
 import SplashScreen from "react-native-splash-screen";
 import VerifyUserPage from "./pages/VerifyUserPage";
 import { Provider as PaperProvider } from "react-native-paper";
-import AsyncStorage from "@react-native-community/async-storage";
 import { currentThemeState } from "./recoil/atoms";
 
 const App = () => {

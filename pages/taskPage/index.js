@@ -75,6 +75,34 @@ const CustomDrawer = ({ navigation }) => {
       setDocuments(temp);
     });
   }, []);
+  const onSubmitHandler = async () => {
+    if (dialogText === "") {
+      Toast.show({
+        text: "List Name Shouldn't Be Empty!",
+        buttonText: "Okay",
+        type: "danger",
+      });
+    } else {
+      let temp = [...documents, dialogText];
+      setDocuments(temp);
+      setCurrentList(dialogText);
+      setDialog(false);
+      navigation.closeDrawer();
+
+      setDialogText("");
+      await firestore()
+        .collection(currentUser)
+        .doc(dialogText)
+        .set({ task: [] })
+        .then(() => {
+          Toast.show({
+            text: "New List Created!",
+            buttonText: "Okay",
+            type: "success",
+          });
+        });
+    }
+  };
   return (
     <View
       style={{
@@ -97,11 +125,11 @@ const CustomDrawer = ({ navigation }) => {
           </Dialog.Title>
           <Dialog.Content>
             <TextInput
+              onSubmitEditing={onSubmitHandler}
               style={{
                 marginBottom: 20,
                 borderBottomWidth: currentTheme === "light" ? 0.1 : 0,
               }}
-              value={dialogText}
               onChangeText={(text) => setDialogText(text)}
               label="Enter List Name"
               theme={{
@@ -127,34 +155,7 @@ const CustomDrawer = ({ navigation }) => {
             <Button
               mode={"text"}
               color="rgb(29,161,242)"
-              onPress={async () => {
-                if (dialogText === "") {
-                  Toast.show({
-                    text: "List Name Shouldn't Be Empty!",
-                    buttonText: "Okay",
-                    type: "danger",
-                  });
-                } else {
-                  let temp = [...documents, dialogText];
-                  setDocuments(temp);
-                  setCurrentList(dialogText);
-                  setDialog(false);
-                  navigation.closeDrawer();
-
-                  setDialogText("");
-                  await firestore()
-                    .collection(currentUser)
-                    .doc(dialogText)
-                    .set({ task: [] })
-                    .then(() => {
-                      Toast.show({
-                        text: "New List Created!",
-                        buttonText: "Okay",
-                        type: "success",
-                      });
-                    });
-                }
-              }}
+              onPress={onSubmitHandler}
             >
               Add
             </Button>
@@ -305,16 +306,38 @@ const TaskPage = ({ navigation }) => {
 
     return () => subscriber();
   }, [listName]);
-
+  const onSubmitHandler = async () => {
+    if (dialogText === "") {
+      Toast.show({
+        text: "Item should not be empty!",
+        buttonText: "Okay",
+        type: "danger",
+      });
+    } else {
+      try {
+        await AsyncStorage.setItem("@list", currentList);
+      } catch (e) {
+        console.log(e);
+      }
+      let temp = [...tasks];
+      temp[index] = dialogText;
+      setTasks(temp);
+      dialogRef.current.safeCloseOpenRow();
+      setDialog(false);
+      Toast.show({
+        text: "Name Changed!",
+        buttonText: "Okay",
+        type: "success",
+      });
+      await firestore()
+        .collection(currentUser)
+        .doc(currentList)
+        .set({ task: temp });
+    }
+  };
   if (!currentUser) {
     return <Redirect to={"/"} />;
   }
-
-  const renderItem = (data, rowMap) => {
-    return (
-      <CustomCard tasks={tasks} setTasks={setTasks} task={data} index={1} />
-    );
-  };
 
   return (
     <View style={styles.root}>
@@ -333,13 +356,14 @@ const TaskPage = ({ navigation }) => {
           </Dialog.Title>
           <Dialog.Content>
             <TextInput
+              onSubmitEditing={onSubmitHandler}
               autoFocus
               selectTextOnFocus
               style={{
                 marginBottom: 20,
                 borderBottomWidth: currentTheme === "light" ? 0.1 : 0,
               }}
-              value={dialogText}
+              defaultValue={dialogText}
               onChangeText={(text) => setDialogText(text)}
               label="Enter List Name"
               theme={{
@@ -368,35 +392,7 @@ const TaskPage = ({ navigation }) => {
             <Button
               mode={"text"}
               color="rgb(29,161,242)"
-              onPress={async () => {
-                if (dialogText === "") {
-                  Toast.show({
-                    text: "Item should not be empty!",
-                    buttonText: "Okay",
-                    type: "danger",
-                  });
-                } else {
-                  try {
-                    await AsyncStorage.setItem("@list", currentList);
-                  } catch (e) {
-                    console.log(e);
-                  }
-                  let temp = [...tasks];
-                  temp[index] = dialogText;
-                  setTasks(temp);
-                  dialogRef.current.safeCloseOpenRow();
-                  setDialog(false);
-                  Toast.show({
-                    text: "Name Changed!",
-                    buttonText: "Okay",
-                    type: "success",
-                  });
-                  await firestore()
-                    .collection(currentUser)
-                    .doc(currentList)
-                    .set({ task: temp });
-                }
-              }}
+              onPress={onSubmitHandler}
             >
               Add
             </Button>
@@ -458,23 +454,6 @@ const TaskPage = ({ navigation }) => {
           disableRightSwipe
         />
       ) : (
-        // <FlatList
-        //   keyboardShouldPersistTaps={"handled"}
-        //   ListHeaderComponent={
-        //     <TaskHeader
-        //       listName={listName}
-        //       navigation={navigation}
-        //       setTasks={setTasks}
-        //       tasks={tasks}
-        //       currentUser={currentUser}
-        //       currentList={currentList}
-        //       empty={false}
-        //     />
-        //   }
-        //   data={tasks}
-        //   renderItem={renderItem}
-        //   keyExtractor={(item, index) => index.toString()}
-        // />
         <TaskHeader
           listName={listName}
           navigation={navigation}
