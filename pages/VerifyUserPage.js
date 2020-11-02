@@ -123,7 +123,6 @@ const VerifyUserPage = ({ location }) => {
                   .then(() => {
                     setCurrentUser(uid);
                     setLoading(false);
-                    console.log(uid);
                   });
               })
               .catch((error) => {

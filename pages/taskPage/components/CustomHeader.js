@@ -34,16 +34,7 @@ const CustomHeader = ({ navigation }) => {
               <IconButton
                 onPress={async () => {
                   setCurrentTheme("dark");
-
                   await AsyncStorage.setItem("@theme", "dark");
-                  AsyncStorage.getAllKeys((err, keys) => {
-                    AsyncStorage.multiGet(keys, (error, stores) => {
-                      stores.map((result, i, store) => {
-                        console.log({ [store[i][0]]: store[i][1] });
-                        return true;
-                      });
-                    });
-                  });
                 }}
                 icon={"weather-night"}
                 color={"white"}
@@ -53,15 +44,6 @@ const CustomHeader = ({ navigation }) => {
                 onPress={async () => {
                   setCurrentTheme("light");
                   await AsyncStorage.setItem("@theme", "light");
-
-                  AsyncStorage.getAllKeys((err, keys) => {
-                    AsyncStorage.multiGet(keys, (error, stores) => {
-                      stores.map((result, i, store) => {
-                        console.log({ [store[i][0]]: store[i][1] });
-                        return true;
-                      });
-                    });
-                  });
                 }}
                 icon={"white-balance-sunny"}
                 color={"white"}

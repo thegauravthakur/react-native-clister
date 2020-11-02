@@ -15,9 +15,7 @@ const CustomCard = ({ task, index, tasks, setTasks, rowMap }) => {
   const currentSection = useRecoilValue(currentListState);
   const currentUser = useRecoilValue(userState);
   const currentTheme = useRecoilValue(currentThemeState);
-  useEffect(() => {
-    console.log(rowMap);
-  });
+
   return (
     <Card
       style={{

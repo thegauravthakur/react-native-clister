@@ -164,7 +164,6 @@ const LoginPage = ({ history }) => {
               });
               setLoading(false);
             } else {
-              console.log(email);
               await auth()
                 .signInWithEmailAndPassword(email, password)
                 .then(({ user }) => {
