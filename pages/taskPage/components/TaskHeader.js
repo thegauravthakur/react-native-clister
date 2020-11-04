@@ -52,6 +52,13 @@ const TaskHeader = ({
       <View>
         <CustomHeader navigation={navigation} />
         <Text
+          onPress={async () => {
+            try {
+              await AsyncStorage.setItem("@list", listName);
+            } catch (e) {
+              console.log(e);
+            }
+          }}
           style={{
             textAlign: "center",
             fontWeight: "bold",

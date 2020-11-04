@@ -31,19 +31,7 @@ const CustomHeader = ({ navigation }) => {
         />
       </Left>
       <Body>
-        <Title>
-          <Text
-            onPress={async () => {
-              try {
-                await AsyncStorage.setItem("@list", currentList);
-              } catch (e) {
-                console.log(e);
-              }
-            }}
-          >
-            C-LISTER
-          </Text>
-        </Title>
+        <Title>C-LISTER</Title>
       </Body>
       <Right>
         <View style={{ flexDirection: "row" }}>
