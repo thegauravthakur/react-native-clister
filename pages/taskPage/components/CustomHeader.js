@@ -1,14 +1,20 @@
 import React from "react";
 import { Body, Header, Left, Right, Title } from "native-base";
 import auth from "@react-native-firebase/auth";
-import { useRecoilState, useSetRecoilState } from "recoil";
-import { currentThemeState, userState } from "../../../recoil/atoms";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import {
+  currentListState,
+  currentThemeState,
+  userState,
+} from "../../../recoil/atoms";
 import { View } from "react-native";
 import { IconButton } from "react-native-paper";
 import { PRIMARY_LIGHT } from "../../../constants/colors";
 import AsyncStorage from "@react-native-community/async-storage";
+import { Text } from "react-native";
 
 const CustomHeader = ({ navigation }) => {
+  const currentList = useRecoilValue(currentListState);
   const [currentTheme, setCurrentTheme] = useRecoilState(currentThemeState);
   const setCurrentUser = useSetRecoilState(userState);
   return (
@@ -25,7 +31,19 @@ const CustomHeader = ({ navigation }) => {
         />
       </Left>
       <Body>
-        <Title>C-LISTER</Title>
+        <Title>
+          <Text
+            onPress={async () => {
+              try {
+                await AsyncStorage.setItem("@list", currentList);
+              } catch (e) {
+                console.log(e);
+              }
+            }}
+          >
+            C-LISTER
+          </Text>
+        </Title>
       </Body>
       <Right>
         <View style={{ flexDirection: "row" }}>
