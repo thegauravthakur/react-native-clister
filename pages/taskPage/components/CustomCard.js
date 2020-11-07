@@ -38,7 +38,7 @@ const CustomCard = ({ task, index, tasks, setTasks, rowMap }) => {
             >
               <Text
                 style={{
-                  flex: 1,
+                  flex: index >= 9 ? 1.3 : 1,
                   fontWeight: "bold",
                   color:
                     currentTheme === "dark" ? "rgb(29,161,242)" : PRIMARY_LIGHT,
@@ -49,7 +49,7 @@ const CustomCard = ({ task, index, tasks, setTasks, rowMap }) => {
               </Text>
               <Text
                 style={{
-                  flex: 11,
+                  flex: index >= 9 ? 10.7 : 11,
                   fontSize: 16,
                   fontWeight: "normal",
                   color: currentTheme === "dark" ? "white" : "teal",

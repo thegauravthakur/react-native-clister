@@ -122,7 +122,7 @@ const TaskHeader = ({
           <Text
             style={{
               textAlign: "center",
-              color: "white",
+              color: currentTheme === "dark" ? "white" : "black",
               fontWeight: "bold",
               fontSize: 19,
             }}

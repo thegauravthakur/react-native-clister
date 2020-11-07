@@ -19,6 +19,7 @@ const CustomHeader = ({ navigation }) => {
   const setCurrentUser = useSetRecoilState(userState);
   return (
     <Header
+      androidStatusBarColor={currentTheme === "light" ? "#233494" : "#242424"}
       style={{
         backgroundColor: currentTheme === "dark" ? "#242424" : PRIMARY_LIGHT,
       }}

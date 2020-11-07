@@ -14,7 +14,7 @@ import Axios from "axios";
 import { Header, Body, Right, Title, Toast } from "native-base";
 import { Redirect } from "react-router-native";
 import { TextInput, Button, IconButton } from "react-native-paper";
-import { PRIMARY_LIGHT } from "../constants/colors";
+import { DARK_WHITE, PRIMARY_LIGHT } from "../constants/colors";
 import AsyncStorage from "@react-native-community/async-storage";
 
 const LoginPage = ({ history }) => {
@@ -46,6 +46,7 @@ const LoginPage = ({ history }) => {
       }}
     >
       <Header
+        androidStatusBarColor={currentTheme === "light" ? "#233494" : "#242424"}
         style={{
           backgroundColor: currentTheme === "dark" ? "#242424" : PRIMARY_LIGHT,
         }}
@@ -95,7 +96,6 @@ const LoginPage = ({ history }) => {
         <Text style={style.title}>Sign Up</Text>
         <TextInput
           textContentType={"none"}
-          autoCompleteType={"email"}
           left={
             <TextInput.Icon
               name="email"
@@ -123,7 +123,6 @@ const LoginPage = ({ history }) => {
         <TextInput
           textContentType={"none"}
           secureTextEntry={true}
-          autoCompleteType={"password"}
           left={
             <TextInput.Icon
               name="lock"

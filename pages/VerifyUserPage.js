@@ -1,11 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  ActivityIndicator,
-  Dimensions,
-  ProgressBarAndroid,
-  Text,
-  View,
-} from "react-native";
+import { Dimensions, ProgressBarAndroid, Text, View } from "react-native";
 import AsyncStorage from "@react-native-community/async-storage";
 import auth from "@react-native-firebase/auth";
 import firestore from "@react-native-firebase/firestore";
@@ -40,6 +34,9 @@ const VerifyUserPage = ({ location }) => {
         }}
       >
         <Header
+          androidStatusBarColor={
+            currentTheme === "light" ? "#233494" : "#242424"
+          }
           style={{
             backgroundColor:
               currentTheme === "dark" ? "#242424" : PRIMARY_LIGHT,
@@ -89,6 +86,7 @@ const VerifyUserPage = ({ location }) => {
           Enter the OTP
         </Text>
         <TextInput
+          keyboardType={"numeric"}
           style={{
             marginBottom: 20,
             borderBottomWidth: currentTheme === "light" ? 0.1 : 0,
