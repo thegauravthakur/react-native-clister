@@ -302,6 +302,7 @@ const TaskPage = ({ navigation }) => {
       .onSnapshot((documentSnapshot) => {
         const { task } = documentSnapshot.data();
         setTasks(task);
+        AsyncStorage.setItem("@list", currentList);
       });
 
     return () => subscriber();

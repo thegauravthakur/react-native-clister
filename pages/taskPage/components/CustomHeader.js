@@ -58,9 +58,10 @@ const CustomHeader = ({ navigation }) => {
           </View>
           <View>
             <IconButton
-              onPress={async () => {
-                await auth().signOut();
-                setCurrentUser(null);
+              onPress={() => {
+                auth()
+                  .signOut()
+                  .then(() => setCurrentUser(null));
               }}
               icon="logout"
               color={"white"}

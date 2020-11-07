@@ -29,6 +29,7 @@ const LoginPage = ({ history }) => {
   const style = StyleSheet.create({
     root: { marginHorizontal: 7 },
     title: {
+      fontFamily: "",
       alignSelf: "center",
       color: currentTheme === "dark" ? "rgb(29,161,242)" : "teal",
       fontSize: 50,
