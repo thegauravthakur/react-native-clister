@@ -33,7 +33,7 @@
     "react-native-vector-icons": "^7.1.0",
     "react-router-native": "^5.2.0",
     "react-router-native-stack": "^0.0.16",
-    "recoil": "https://github.com/facebookexperimental/Recoil.git#nightly",
+    "recoil" : "0.1.2",
     "yarn": "^1.22.10"
   },
   "devDependencies": {

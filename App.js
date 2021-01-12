@@ -12,7 +12,6 @@ import { Provider as PaperProvider } from "react-native-paper";
 import { currentThemeState } from "./recoil/atoms";
 
 const App = () => {
-  const setCurrentTheme = useSetRecoilState(currentThemeState);
   useEffect(() => {
     (async () => SplashScreen.hide())();
   }, []);
